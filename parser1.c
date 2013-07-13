@@ -85,6 +85,7 @@ static AST ifstmt(void);
 static AST exprs(void);
 static AST expr(void);
 static AST bexpr(void);
+static AST bexpr_sub(void);
 static AST term(void);
 static AST factor(void);
 
@@ -506,7 +507,7 @@ static AST expr() {
 	if (t->sym == ';' || t->sym == ',' || t->sym == ')' || t->sym == ']')
 	    break;
 	switch (t->sym) {
-	    case ASNOP:
+	    case ASNOP: case RELOP: case LOGOP:
 		// this should be an assignment:
 		return a;
 	    case ARIOP:
@@ -557,7 +558,7 @@ static AST term() {
 	    break;
 
 	switch (t->sym) {
-	    case ASNOP:
+	    case ASNOP: case RELOP: case LOGOP:
 		return a;
 	    case DUPOP:
 		if (nodetype(a) == nLVAL || nodetype(a) == nVREF) return a; 
@@ -615,7 +616,7 @@ static AST factor() {
 		return a;
 	    }
 	    break;
-	case ILIT: case CLIT: case FLIT: case SLIT:
+	case ILIT: case CLIT: case FLIT: case SLIT: 
 	    a = con();
 	    break;
 	case '(': 
@@ -633,12 +634,61 @@ static AST factor() {
     return a;
 }
 
-/* dummy */
+/* good */
 static AST bexpr() {
     Token *t = &tok;
-    int a1=0,a2=0;
-    a1 = vref();
-    gettoken();
-    a2 = con();
-    return make_AST_op2('+',a1,a2);
+    char *s = strdup(t->text);
+    AST a, a1;
+    a = bexpr_sub();
+    int op;
+    while (true){
+	switch (t->sym) {
+	    case ')':
+		return a;
+	    case LOGOP:
+		op = t->ival;
+		gettoken();
+		a1 = bexpr_sub();
+		a = make_AST_op2(op, a, a1);
+		break;
+	    default:
+		parse_error("Expected \')\' or a logical operator");
+		return 0;
+	}
+    }
+}
+
+static AST bexpr_sub() {
+    Token *t = &tok;
+    char *s = strdup(t->text);
+    AST a, a1;
+    int op;
+    switch (t->sym){
+	case tTRUE: 
+	    gettoken(); 
+	    return make_AST_con(s,1);
+	case tFALSE: 
+	    gettoken(); 
+	    return make_AST_con(s,0);
+	case '(':
+	    gettoken();
+	    a = bexpr();
+	    if (t->sym == ')'){
+		gettoken();
+	    } else {
+		parse_error(") expected");
+	    }
+	    return a;
+	default:
+	    a = expr();
+	    switch (t->sym){
+		case RELOP:
+		    op = t->ival;
+		    gettoken();
+		    a1 = expr();
+		    return make_AST_op2(op, a, a1);
+		default:
+		    return a;
+	    }
+    }
 }
