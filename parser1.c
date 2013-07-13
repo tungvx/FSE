@@ -508,7 +508,7 @@ static AST expr() {
 	    break;
 	switch (t->sym) {
 	    case ASNOP: case RELOP: case LOGOP:
-		// this should be an assignment:
+		// this should be an assignment: 
 		return a;
 	    case ARIOP:
 		if (t->ival != '+' && t->ival != '-') {
