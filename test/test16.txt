@@ -1,0 +1,9 @@
+class c {
+    int a(int x, int y){
+    }
+    void main(){
+	string x;
+	float y;
+	a(x, y);
+    }
+}

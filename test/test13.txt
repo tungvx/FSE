@@ -1,0 +1,6 @@
+class f {
+    void foo(){}
+    int baa(){
+	foo();
+    }
+}

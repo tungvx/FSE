@@ -1,0 +1,7 @@
+class f{
+    int y;
+    void test(int x){
+	x = 3;
+	y = 3;
+    }
+}

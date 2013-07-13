@@ -1,0 +1,9 @@
+1. block in if, else phrase: 1
+2. scope, duplicate checking for variable: 1
+3. check if function call is correct (check if definition exists).: 1
+4. void function declaration: 2
+5. type missmatched checking for assignment including array: 1
+6. type missmatched checking for argumments of functions: 2
+7. check type of index of array: 1
+8. addding dup operators: 1.
+9. compute type for ++, -- expressions: 1.

@@ -1,0 +1,7 @@
+class c {
+    void f (){
+	int x;
+	float y;
+	x = y;
+    }
+}

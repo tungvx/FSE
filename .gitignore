@@ -1,0 +1,7 @@
+*.o
+tags
+*.out
+parser1
+parser2
+result/
+scanner

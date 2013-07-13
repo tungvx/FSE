@@ -1,0 +1,9 @@
+{
+   int[10] x;
+   int y;
+   y = x[2];
+   if (y > 0) y = x[3] + 4; 
+   else if (y < 0) { int z; y = x[z + 5]; z = y; }
+        else   y = x[x[y]+6]; 
+   x[7] = y + 8; 
+}

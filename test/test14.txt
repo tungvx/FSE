@@ -1,0 +1,6 @@
+// this test should be failed.
+class baa {
+    void foo(){
+	baa();
+    }
+}

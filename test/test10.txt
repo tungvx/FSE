@@ -1,0 +1,7 @@
+class f{
+    int test(int x){
+    }
+    int test1(){
+	x = 4;
+    }
+}
