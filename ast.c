@@ -4,6 +4,7 @@
 #include <strings.h>
 #include "type.h" /* for primtype */
 #include "ast.h"
+#include "token.h"
 
 static Node *ast_buf;
 static int   ast_cnt;
@@ -22,7 +23,7 @@ static char *namestr[] = {
     "@argdecls", "argdecl", 
     "@args", "arg", 
     "classhead", "block", 
-    "@stmts", "stmt", "asn", "if", "@exprs", "expr", "vref", 
+    "@stmts", "stmt", "asn", "if", "@exprs", "expr", "vref", "while", 
     "op0", "op1", "op2", "deref", "lval", 
     "call", "return", "break", "continue", 
     "@vars", "var", "con", "name",
@@ -168,6 +169,13 @@ AST make_AST_asn(int op, AST s0, AST s1) {
 AST make_AST_if(AST s0, AST s1, AST s2) {
     AST a = new_AST();
     set_node(a, nIF, 0, 0);
+    set_sons(a, s0, s1, s2, 0);
+    return a;
+}
+
+AST make_AST_while(AST s0, AST s1, AST s2) {
+    AST a = new_AST();
+    set_node(a, nWHILE, 0, 0);
     set_sons(a, s0, s1, s2, 0);
     return a;
 }
@@ -364,26 +372,45 @@ static void abbrib(Node *np) {
 static void print_Node_begin(Node *np)  {
     char *s;
 
-    if (np->type == nOP2) {
-	if (!xml)
-	    printf("op2<\'%c\',", np->ival);
-	else
-	    printf("<op2 val=\"%c\">", np->ival);
-	return;
-    } else if (np->type == nOP1){
-	if (!xml)
-	    printf("op1<\'%c%c\',", np->ival - 0x80, np->ival - 0x80);
-	else
-	    printf("<op1 val=\"%c%c\">", np->ival - 0x80, np->ival - 0x80);
-	return;
-    }else if (np->type == nOP0){
-	if (!xml)
-	    printf("op0<\'%c%c\',", np->ival - 0x80, np->ival - 0x80);
-	else
-	    printf("<op0 val=\"%c%c\">", np->ival - 0x80, np->ival - 0x80);
-	return;
-    }
+    if (np->type == nOP2 || np->type == nOP1 || np->type == nOP0) {
+	int first = 0, second = 0;
+	switch(np->ival){
+	    case PLUSPLUS: case MINUSMINUS: case ANDAND: case OROR: case LSHIFT: case RSHIFT:
+		second = np->ival - 0x80;
+		first = second;
+		break;	
+	    case PLUSEQ: case MINUSEQ: case STAREQ: case SLASHEQ: case PERCENTEQ: case GTEQ: case LTEQ: case EQEQ: case NOTEQ:
+		second = '='; 
+		first = np->ival - 0x60;
+		break;
+	    default:
+		first = np->ival;
+		break;
+	}
+	switch (np->type){
+	    case nOP2:
+		if (!xml)
+		    second ? printf("op2<\'%c%c\',", first, second) : printf("op2<\'%c\',", first);
+		else
+		    second ? printf("<op2 val=\"%c%c\">", first, second) : printf("<op2 val=\"%c\">", first);
+		return;
 
+	    case nOP1:
+		if (!xml)
+		    second ? printf("op1<\'%c%c\',", first, second) : printf("op1<\'%c\',", first);
+		else
+		    second ? printf("<op1 val=\"%c%c\">", first, second) : printf("<op1 val=\"%c\">", first);
+		return;
+
+	    case nOP0:
+		if (!xml)
+		    second ? printf("op0<\'%c%c\',", first, second) : printf("op0<\'%c\',", first);
+		else
+		    second ? printf("<op0 val=\"%c%c\">", first, second) : printf("<op0 val=\"%c\">", first);
+		return;
+	}
+
+    }
 
     if (np->type == tPRIM) {
 	if (!xml) printf("prim<%s", np->text);

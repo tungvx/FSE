@@ -5,5 +5,5 @@
 5. type missmatched checking for assignment including array: 1
 6. type missmatched checking for argumments of functions: 2
 7. check type of index of array: 1
-8. addding dup operators: 1.
+8. addding dup operators,relation, logical operator: 1.
 9. compute type for ++, -- expressions: 1.

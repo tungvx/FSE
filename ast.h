@@ -15,7 +15,7 @@ typedef enum {
   nARGDECLS, nARGDECL, 		/* for funcdecl */
   nARGS, nARG,			/* for funcall  */
   nCLASSHEAD, nBLOCK, 
-  nSTMTS, nSTMT, nASN, nIF, nEXPRS, nEXPR, nVREF,
+  nSTMTS, nSTMT, nASN, nIF, nEXPRS, nEXPR, nVREF, nWHILE,
   nOP0, nOP1, nOP2, nDEREF, nLVAL,
   nCALL, nRET, nBREAK, nCONTINUE,
   nVARS, nVAR, nCON, nNAME, 
