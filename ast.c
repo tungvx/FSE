@@ -173,10 +173,23 @@ AST make_AST_if(AST s0, AST s1, AST s2) {
     return a;
 }
 
-AST make_AST_while(AST s0, AST s1, AST s2) {
+AST make_AST_while(AST s0, AST s1) {
     AST a = new_AST();
     set_node(a, nWHILE, 0, 0);
-    set_sons(a, s0, s1, s2, 0);
+    set_sons(a, s0, s1, 0, 0);
+    return a;
+}
+
+AST make_AST_break() {
+    AST a = new_AST();
+    set_node(a, nBREAK, 0, 0);
+    return a;
+}
+
+
+AST make_AST_continue() {
+    AST a = new_AST();
+    set_node(a, nCONTINUE, 0, 0);
     return a;
 }
 

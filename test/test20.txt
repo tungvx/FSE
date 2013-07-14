@@ -1,6 +1,9 @@
 {
     while(true){
-	int x;
-	x = 2;
+	int[10] x;
+	int y;
+	x[1] = 2;
+	break;
+	continue;
     }
 }

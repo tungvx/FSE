@@ -359,7 +359,7 @@ static AST stmts() {
 
     a = new_list(nSTMTS);
     while (true) {
-	if (t->sym != ID && t->sym != tIF && t->sym != '{' && t->sym != tWHILE) 
+	if (t->sym != ID && t->sym != tIF && t->sym != '{' && t->sym != tWHILE && t->sym != tBREAK && t->sym != tCONTINUE) 
 	    break;
 
 	a1 = stmt();
@@ -384,6 +384,18 @@ static AST stmt() {
 	    break;
 	case tWHILE:
 	    a1 = whilestmt();
+	    break;
+	case tBREAK:
+	    a1 = make_AST_break();
+	    gettoken();
+	    if (t->sym == ';') gettoken();
+	    else parse_error("expected ;");
+	    break;
+	case tCONTINUE:
+	    a1 = make_AST_continue();
+	    gettoken();
+	    if (t->sym == ';') gettoken();
+	    else parse_error("expected ;");
 	    break;
 	case '{': 
 	    a1 = block();
@@ -462,7 +474,7 @@ static AST ifstmt() {
 static AST whilestmt() {
     Token *t = &tok;
     AST a=0;
-    AST a1=0,a2=0,a3=0;
+    AST a1=0,a2=0;
 
     if (t->sym == tWHILE) {
 	gettoken();
@@ -477,7 +489,7 @@ static AST whilestmt() {
 	} else {
 	    parse_error("expected (");
 	}
-	a = make_AST_while(a1,a2,a3);
+	a = make_AST_while(a1,a2);
     } else {
 	parse_error("expected while");
 	skiptoken(';');
