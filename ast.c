@@ -17,7 +17,8 @@ static void print_Node_end(Node*);
 
 static char *namestr[] = {
     "prog",
-    "@classdecls", "classdecl", 
+    "@classdecls", "classdecl",
+    "@structs", "struct",
     "@vardecls", "vardecl", 
     "@funcdecls", "funcdecl", 
     "@argdecls", "argdecl", 
@@ -220,6 +221,13 @@ AST make_AST_funcdecl(AST name, AST type, AST args, AST block) {
     if (type) np->son[1] = type;
     if (args) np->son[2] = args;
     if (block) np->son[3] = block;
+    return a;
+}
+
+AST make_AST_structdecl(AST name, AST vardecls){
+    AST a = new_AST();
+    set_node(a, nSTRUCT, 0, 0);
+    set_sons(a, name, vardecls, 0, 0);
     return a;
 }
 

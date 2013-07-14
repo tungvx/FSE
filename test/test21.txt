@@ -1,0 +1,8 @@
+class c {
+    struct he{
+	int x;
+    };
+    int x;
+    int a(){
+    }
+}
