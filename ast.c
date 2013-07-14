@@ -387,12 +387,52 @@ static void print_Node_begin(Node *np)  {
 		first = np->ival;
 		break;
 	}
+
+	char a[11];
+	char temp[2];
+	if (xml){
+	    switch (first){
+		case GT:
+		    strcpy(a, "&gt;");
+		    break;
+		case LT:
+		    strcpy(a, "&lt;");
+		    break;
+		case '&':
+		    strcpy(a, "&amp;");
+		    break;
+		default:
+		    temp[0] = first;
+		    temp[1] = '\0';
+		    strcpy(a, temp);
+		    break;
+	    }
+	    if (second){	
+		switch (second){
+		    case GT:
+			strcat(a, "&gt;");
+			break;
+		    case LT:
+			strcat(a, "&lt;");
+			break;
+		    case '&':
+			strcpy(a, "&amp;");
+			break;
+		    default:
+			temp[0] = second;
+			temp[1] = '\0';
+			strcat(a, temp);
+			break;
+		}
+	    }
+	}
 	switch (np->type){
 	    case nOP2:
 		if (!xml)
 		    second ? printf("op2<\'%c%c\',", first, second) : printf("op2<\'%c\',", first);
 		else
-		    second ? printf("<op2 val=\"%c%c\">", first, second) : printf("<op2 val=\"%c\">", first);
+		    printf("<op2 val=\"%s\">", a);
+		/*second ? printf("<op2 val=\"%c%c\">", first, second) : printf("<op2 val=\"%c\">", first);*/
 		return;
 
 	    case nOP1:
