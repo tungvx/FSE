@@ -4,6 +4,7 @@
 #include <strings.h>
 #include "loc.h"
 #include "sym.h"
+#include "ast.h"
 
 static symentry *symtab;
 static int symcnt;
@@ -15,6 +16,7 @@ static int var_seq;
 static int con_seq;
 static int type_seq;
 static int func_seq;
+static bool obmitted[MAX_SYMENTRY] = {false};
 
 static scope *cur = 0;
 static scope *new_scope();
@@ -75,6 +77,10 @@ static scope *new_scope() {
 
 void delete_scope(scope *sp) {
     /* do nothing */
+    int i;
+    for (i = cur->begin; i <= cur->end; i++) {
+	obmitted[i] = true;
+    }
 }
 
 void enter_block() {
@@ -167,7 +173,7 @@ int lookup_cur(scope *sp, char *name) {
 
     /* search reverse order */
     for( p = ep; p >= bp; --i,--p) {
-       if (p && p->name && strcmp(p->name,name)==0) {
+       if (p && !obmitted[i] && p->name && strcmp(p->name,name)==0) {
            symentry *ep = &symtab[i];
            if (ep && ep->prop != vARG) return i;
 

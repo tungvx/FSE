@@ -10,6 +10,6 @@ class a {
 class main{
     int main(){
 	a aObject;
-	x = 3;
+	aObject.f();
     }
 }
