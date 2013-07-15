@@ -7,5 +7,5 @@
 7. check type of index of array: 1
 8. addding dup operators,relation, logical operator: 1.
 9. compute type for ++, -- expressions: 1.
-10. support break, continue stmt: 1
+10. support break, continue stmt, they are allowed inside whiel stmt only: 1
 11. support nested class definition: 2.

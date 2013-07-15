@@ -63,7 +63,7 @@ extern void skiptoken(int);
 extern void skiptoken2(int,int);
 extern void skiptoken3(int,int,int);
 
-static AST block(void);
+static AST block(bool);
 static bool isprimtype(int k);
 static AST vardecls(AST vdl, AST fdl);
 static AST vardecl(void);
@@ -78,8 +78,8 @@ static AST lval(void);
 static AST vref(void);
 static AST name(void);
 static AST con(void);
-static AST stmts(void);
-static AST stmt(void);
+static AST stmts(bool isWhile);
+static AST stmt(bool);
 static AST asnstmt(void);
 static AST ifstmt(void);
 static AST whilestmt(void);
@@ -104,7 +104,7 @@ int main() {
 
     zero = make_AST_con("0",0);
     gettoken();
-    ast_root = block();  /* inside the block */
+    ast_root = block(false);  /* inside the block */
 
     print_AST(ast_root);
     printf("\n\n");
@@ -128,11 +128,11 @@ int main() {
 int start_parser() {
     zero = make_AST_con("0",0);
     gettoken();
-    return block(); 
+    return block(false); 
 }
 #endif
 
-static AST block() {
+static AST block(bool isWhile) {
     Token *t = &tok;
     AST a=0;
     AST vdl,fdl,sts;
@@ -145,7 +145,7 @@ static AST block() {
 	fdl = new_list(nFUNCDECLS);  /* ignored */
 	vardecls(vdl,fdl);
 
-	sts = stmts();
+	sts = stmts(isWhile);
 
 	if (t->sym == '}') {
 	    gettoken();
@@ -352,7 +352,7 @@ static AST con() {
     return a;
 }
 
-static AST stmts() {
+static AST stmts(bool isWhile) {
     Token *t = &tok;
     AST a=0;
     AST a1=0, a2=0 ;
@@ -362,13 +362,13 @@ static AST stmts() {
 	if (t->sym != ID && t->sym != tIF && t->sym != '{' && t->sym != tWHILE && t->sym != tBREAK && t->sym != tCONTINUE) 
 	    break;
 
-	a1 = stmt();
+	a1 = stmt(isWhile);
 	a = append_list(a, a1);
     }
     return a;
 }
 
-static AST stmt() {
+static AST stmt(bool isWhile) {
     Token *t = &tok;
     AST a=0;
     AST a1=0;
@@ -386,19 +386,27 @@ static AST stmt() {
 	    a1 = whilestmt();
 	    break;
 	case tBREAK:
-	    a1 = make_AST_break();
 	    gettoken();
+	    if (!isWhile) {
+		parse_error("Break is allowed inside while stmt only");
+		break;
+	    }
+	    a1 = make_AST_break();
 	    if (t->sym == ';') gettoken();
 	    else parse_error("expected ;");
 	    break;
 	case tCONTINUE:
-	    a1 = make_AST_continue();
 	    gettoken();
+	    if (!isWhile) {
+		parse_error("continue is allowed inside while stmt only");
+		break;
+	    }
+	    a1 = make_AST_continue();
 	    if (t->sym == ';') gettoken();
 	    else parse_error("expected ;");
 	    break;
 	case '{': 
-	    a1 = block();
+	    a1 = block(isWhile);
 	    break;
 
 	default:
@@ -454,10 +462,10 @@ static AST ifstmt() {
 	    if (t->sym == ')') gettoken();
 	    else parse_error("expected )");
 
-	    a2 = stmt();
+	    a2 = stmt(false);
 	    if (t->sym == tELSE) {   /* else is optional */
 		gettoken();
-		a3 = stmt();
+		a3 = stmt(false);
 	    } 
 
 	} else {
@@ -485,7 +493,7 @@ static AST whilestmt() {
 	    if (t->sym == ')') gettoken();
 	    else parse_error("expected )");
 
-	    a2 = stmt();
+	    a2 = stmt(true);
 	} else {
 	    parse_error("expected (");
 	}
