@@ -130,15 +130,34 @@ static bool equal(AST x1, AST x2) {
 	    break;
     }
 
-    parse_error("type mismatch");
     return false;
 }
 
-void equaltype(AST a1, AST a2) {
+bool equaltype(AST a1, AST a2) {
     int x1 = typeof_AST(a1);
     int x2 = typeof_AST(a2);
 
-    equal(x1,x2);
+    return equal(x1,x2);
+}
+
+bool checkArgs(AST argsdecl, AST args){
+    AST mArgsdecl = argsdecl;
+    AST mArgs = args;
+    AST definition = 0, checked = 0;
+    while (mArgsdecl){
+	if (mArgs){
+	    get_sons(mArgsdecl, &definition, &mArgsdecl, 0, 0);
+	    get_sons(mArgs, &checked, &mArgs, 0, 0);
+	    AST first = get_son0(definition);
+	    AST second = get_son0(checked);
+	    if (first){
+		if (second){
+		    if (!equaltype(first, second)) return false;
+		} else return false;
+	    }
+	} else return false;
+    }
+    return true;
 }
 
 int get_sizeoftype(AST ty) {

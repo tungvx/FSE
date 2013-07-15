@@ -443,7 +443,7 @@ static AST asnstmt() {
     }
 
     a2 = expr();
-    equaltype(a1, a2);
+    if (!equaltype(a1, a2)) parse_error("Type missmatched");
     a = make_AST_asn(op, a1, a2);
     return a;
 }

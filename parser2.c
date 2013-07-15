@@ -88,13 +88,14 @@ static AST asnstmt(AST);
 static AST ifstmt(void);
 static AST callstmt(AST);
 static AST returnstmt(void);
-static AST argrefs(AST);
+static AST argrefs();
 static AST argref(void);
 static AST var(void);
 static AST name(void);
 static AST classname(void);
 static AST structname(void);
 static AST vName(void);
+static AST vName_of_class(AST type);
 static AST vref(void);
 static AST lval(void);
 static AST exprs(void);
@@ -564,9 +565,15 @@ static AST stmt() {
 	    } else if (t->sym == '(') {
 		a1 = callstmt(n);
 		if (t->sym == ';') gettoken();
-	    }else if (t->sym == '.'){
+	    } else if (t->sym == '.'){
+		gettoken();
 		type = typeof_AST(n);
-
+		if (nodetype(type) == tCLASS){
+		    AST function_name = vName_of_class(type);
+		} else {
+		    parse_error("Symbol must be instance of a class");
+		    skiptoken(';');
+		}
 	    }else {
 		parse_error("expected ASNOP or Funcall");
 		skiptoken(';');
@@ -661,7 +668,9 @@ static AST callstmt(AST name) {
     //get types of arguments in the function definition.
     get_sons(typeof_AST(name), 0, &a1, 0, 0);
 
-    a2 = argrefs(a1);
+    a2 = argrefs();
+
+    if (!checkArgs(a1, a2)) parse_error("No defined functions matches types of passed arguments");
 
     if (t->sym == ')') gettoken();
     else parse_error("expected (");
@@ -670,7 +679,7 @@ static AST callstmt(AST name) {
     return a;
 }
 
-static AST argrefs(AST definition) {
+static AST argrefs() {
     Token *t = &tok;
     AST a,a1=0;
 
@@ -679,11 +688,6 @@ static AST argrefs(AST definition) {
     while (true) {
 	if (t->sym == ')') break;
 	a1 = argref();
-
-	//start checking types
-	AST check = 0;
-	get_sons(definition, &check, &definition, 0, 0);
-	equaltype(get_son0(check), get_son0(a1));
 
 	if (a1) a = append_list(a,a1);
 
@@ -823,6 +827,21 @@ static AST vName(){
     } else {
 	parse_error("expected ID");
     }
+    return a;
+}
+
+static AST vName_of_class(AST type){
+    Token *t = &tok;
+
+    AST a = 0;
+
+    if (t->sym == ID){
+	char *s = strdup(t->text);
+	AST classDecl = get_father(get_father(type));
+	AST classBody = 0;
+	get_sons(classDecl, 0, &classBody, 0, 0);
+	printf("Body %d\n", classBody);
+    } else parse_error("Expected ID");
     return a;
 }
 
