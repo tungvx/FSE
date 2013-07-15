@@ -42,6 +42,7 @@ static char *nameof(int n) {
 	return namestr[n-nPROG];
     else if (n >= tINT && n <= tFUNC)
 	return tnamestr[n-tINT];
+    else if (n == tCLASS) return "class";
     else
 	return "";
 }
@@ -160,6 +161,25 @@ AST make_AST_void(char *text) {
     return a;
 }
 
+AST make_AST_class(char *text){
+    AST a = new_AST();
+    Node *np;
+    np = &ast_buf[a];
+    np->type = tCLASS;
+    np->text = text;
+    np->ival = a;
+    return a;
+}
+
+AST make_AST_struct(char *text){
+    AST a = new_AST();
+    Node *np;
+    np = &ast_buf[a];
+    np->type = tSTRUCT;
+    np->text = text;
+    np->ival = a;
+    return a;
+}
 AST make_AST_asn(int op, AST s0, AST s1) {
     AST a = new_AST();
     set_node(a, nASN, 0, op);
@@ -248,7 +268,7 @@ AST exists(char *text) {
     Node *np = &ast_buf[1];
 
     for (i=1;i<=ast_cnt;i++,np++) {
-	if ((np->type == nNAME || np->type == tPRIM || np->type == tVOID)
+	if ((np->type == nNAME || np->type == tPRIM || np->type == tVOID || np->type == tCLASS || np->type == tSTRUCT)
 		&& strcmp(text, np->text)==0) return i;
     }
     return 0;
@@ -476,6 +496,10 @@ static void print_Node_begin(Node *np)  {
     if (np->type == tPRIM) {
 	if (!xml) printf("prim<%s", np->text);
 	else printf("<prim>%s", np->text);
+	return;
+    } else if (np->type == tCLASS){
+	if (!xml) printf("class<%s", np->text);
+	else printf("<class>%s", np->text);
 	return;
     }
 

@@ -13,3 +13,8 @@ class c {
 	}
     }
 }
+
+class d{
+    c[19] cObject;
+    e eObject;
+}
