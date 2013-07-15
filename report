@@ -18,4 +18,4 @@
 17. struct as return type of function.: 2
 18. support xor '^^': modify from lexical analysis: 1
 19. support ! operation: 1.
-20.			   
+20. support mutil variables declaration in one line: 1			   

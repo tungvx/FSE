@@ -300,7 +300,7 @@ static AST funcdecls(AST fdl) {
 	a1 = funcdecl();
 	if(a1) fdl = append_list(fdl, a1);
     }
-    if (t->sym != '}') parse_error("Expected void, primitive type, struct, or a class type");
+    if (a1 && t->sym != '}') parse_error("Expected void, primitive type, struct, or a class type");
     return fdl;
 }
 
@@ -553,6 +553,7 @@ static AST stmt() {
     AST a=0;
     AST a1=0;
     AST n;
+    AST type;
 
     switch (t->sym) {
 	case ID: /* ASN or CALL */
@@ -563,7 +564,10 @@ static AST stmt() {
 	    } else if (t->sym == '(') {
 		a1 = callstmt(n);
 		if (t->sym == ';') gettoken();
-	    } else {
+	    }else if (t->sym == '.'){
+		type = typeof_AST(n);
+
+	    }else {
 		parse_error("expected ASNOP or Funcall");
 		skiptoken(';');
 	    }
@@ -662,7 +666,7 @@ static AST callstmt(AST name) {
     if (t->sym == ')') gettoken();
     else parse_error("expected (");
 
-    a = make_AST(nCALL, name, a2, 0, 0);
+    a = make_AST(nCALL, 0, name, a2, 0);
     return a;
 }
 

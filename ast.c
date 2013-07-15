@@ -350,6 +350,11 @@ AST get_son0(AST a) {
     return (a) ? np->son[0] : 0;
 }
 
+AST get_father(AST a){
+    Node *np = &ast_buf[a];
+    return (a) ? np->father : 0;
+}
+
 static void set_son0(AST a, AST s0) {
     Node *np = &ast_buf[a];
     if (s0) np->son[0] = s0;

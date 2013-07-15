@@ -188,7 +188,7 @@ static AST vardecl() {
     AST a1=0,a2=0,a3=0,a4=0;
 
     a2 = typedecl();
-    a1 = var(a2);	/* TODO: change var() to vars() */
+    a1 = vars(a2);	/* TODO: change var() to vars() */
 
     if (t->sym == ';') { /* vardecl */
 	a = make_AST_vardecl(a1, a2, 0, 0);

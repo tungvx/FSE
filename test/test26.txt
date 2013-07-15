@@ -1,0 +1,15 @@
+class a {
+    void f(){
+	int x;
+    }
+    int main(){
+	x = 3;
+    }
+}
+
+class main{
+    int main(){
+	a aObject;
+	x = 3;
+    }
+}
