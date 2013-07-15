@@ -15,4 +15,5 @@
 15. class a return type of function. 	 2
 16. check duplicated definition of function by name only: 2
 17. struct as type of variable: 2
-17. struct as return type of function.				
+17. struct as return type of function.: 2
+18. support xor '^^': modify from lexical analysis: 1				

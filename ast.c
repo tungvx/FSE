@@ -416,7 +416,7 @@ static void print_Node_begin(Node *np)  {
     if (np->type == nOP2 || np->type == nOP1 || np->type == nOP0) {
 	int first = 0, second = 0;
 	switch(np->ival){
-	    case PLUSPLUS: case MINUSMINUS: case ANDAND: case OROR: case LSHIFT: case RSHIFT:
+	    case PLUSPLUS: case MINUSMINUS: case ANDAND: case OROR: case LSHIFT: case RSHIFT: case XORXOR:
 		second = np->ival - 0x80;
 		first = second;
 		break;	

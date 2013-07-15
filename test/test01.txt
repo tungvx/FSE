@@ -7,5 +7,5 @@
    else if (y < 0) { int z; y = x[z + 5]; z = y; }
         else   y = x[x[y]+6]; 
    x[7] = y + 8; 
-   if (x + 2 >= 3 && (x <= y || y == x && y != x)) x;
+   if (x + 2 >= 3 && (x <= y || y == x ^^ y != x)) x;
 }

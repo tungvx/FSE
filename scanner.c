@@ -73,7 +73,7 @@ static Token *gettoken0() {
 
     switch (codeof(ch)) {
 	case '+': case '-': case '*': case'/': case '%':
-	case '<': case '>': case '=': case '!': case '&' : case '|':
+	case '<': case '>': case '=': case '!': case '&' : case '|': case '^':
 	    t = op(ch); break;
 	case '\'':
 	    t = clit(ch); break;
@@ -181,6 +181,7 @@ static Token *op(int ch) {
 
 	case '&':
 	case '|':
+	case '^':
 	    outch(ch);
 	    ch2 = nextch();
 	    if (ch2 == ch) {

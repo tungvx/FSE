@@ -37,6 +37,7 @@ tEND, ERROR=-1 };
 #define OROR       WITHDUP('|')
 #define LSHIFT	   WITHDUP('<')
 #define RSHIFT	   WITHDUP('>')
+#define XORXOR	   WITHDUP('^')
 
 typedef struct Token {
     enum tokentype sym;
