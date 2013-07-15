@@ -283,7 +283,7 @@ static AST funcdecls(AST fdl) {
     AST a1=0;
 
     while (true) {
-	if ( !isrettype(t->sym)) break;
+	if ( !isrettype(t->sym) && !isclasstype()) break;
 	a1 = funcdecl();
 	if(a1) fdl = append_list(fdl, a1);
     }

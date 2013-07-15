@@ -1,0 +1,8 @@
+class a {
+    a newA(){
+    }
+    a moreNewA(){
+    }
+    a newA(){
+    }
+}

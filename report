@@ -9,3 +9,8 @@
 9. compute type for ++, -- expressions: 1.
 10. support break, continue stmt, they are allowed inside whiel stmt only: 1
 11. support nested class definition: 2.
+12. nested class definition, nested funtion: 2.
+13. class a type of variable. 2
+14. check duplicated declaration of class.2
+15. class a return type of function. 	 2
+16. 				     
