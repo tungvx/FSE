@@ -465,17 +465,19 @@ static AST argdecl() {
 static AST block() {
     Token *t = &tok;
     AST a=0;
-    AST vdl,sts;
+    AST vdl, fdl, sts;
 
     vdl = new_list(nVARDECLS);
+    fdl = new_list(nFUNCDECLS);
     if(t->sym == '{') {
 	gettoken();
 	enter_block();
 
-	vardecls(vdl,0);
+	vardecls(vdl,fdl);
+	funcdecls(fdl);
 	sts = stmts();
 
-	a = make_AST(nBLOCK, vdl, sts, 0, 0);
+	a = make_AST(nBLOCK, vdl, fdl, sts, 0);
 	leave_block();
 
 	if (t->sym == '}') gettoken();
