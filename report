@@ -14,4 +14,5 @@
 14. check duplicated declaration of class.2
 15. class a return type of function. 	 2
 16. check duplicated definition of function by name only: 2
-17.      				     
+17. struct as type of variable: 2
+17. struct as return type of function.				
