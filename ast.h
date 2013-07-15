@@ -9,7 +9,7 @@ typedef enum { false=0, true=1 } bool;
 
 typedef enum {
   nPROG=1024, 
-  nCLASSDECLS, nCLASSDECL, 
+  nCLASSDECLS, nCLASSDECL, nCLASSBODY,  
   nSTRUCTS, nSTRUCT,
   nVARDECLS, nVARDECL, 
   nFUNCDECLS, nFUNCDECL, 

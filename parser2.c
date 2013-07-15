@@ -168,7 +168,7 @@ static AST classdecls() {
 static AST classdecl() {
     Token *t = &tok;
     AST a=0;
-    AST a1=0, a2=0, a3=0, a4 = 0;
+    AST a1=0, a2=0, a3=0, a4 = 0, a5 = 0;
     AST sdl = 0, vdl=0, fdl=0;  /* struct, var and func decl list */
 
     a1 = classhead();
@@ -182,13 +182,15 @@ static AST classdecl() {
 	fdl = new_list(nFUNCDECLS);
 
 	a2 = structdecls(sdl);
-	a3 = vardecls(vdl, fdl);
-	a4 = funcdecls(fdl);
+	if (t->sym == tCLASS) a3 = classdecls();
+	a4 = vardecls(vdl, fdl);
+	a5 = funcdecls(fdl);
 	leave_block();
 
 	if (t->sym == '}') {
 	    gettoken();
-	    a = make_AST(nCLASSDECL, a1, a2, a3, a4);
+	    a = make_AST(nCLASSBODY, a2, a3, a4, a5);
+	    a = make_AST(nCLASSDECL, a1, a, 0, 0);
 	} else {
 	    parse_error("expected }");
 	}

@@ -17,7 +17,7 @@ static void print_Node_end(Node*);
 
 static char *namestr[] = {
     "prog",
-    "@classdecls", "classdecl",
+    "@classdecls", "classdecl", "classbody",
     "@structs", "struct",
     "@vardecls", "vardecl", 
     "@funcdecls", "funcdecl", 
