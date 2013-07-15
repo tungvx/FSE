@@ -375,8 +375,6 @@ static AST funcdecl() {
 
     a2 = retdecl();
     a1 = name();
-    /*int idx = lookup_SYM(get_text(a1));*/
-    /*if (idx != 0) parse_error("Duplicated function definition");*/
     ftype = func_type(gen(fLOCAL),a2);
 
     if (t->sym == '(') { /* must be func */
@@ -384,7 +382,7 @@ static AST funcdecl() {
 
 	mark_args();
 	a3 = argdecls();
-	if (checkFuncDuplicate(get_text(a1), a3)) parse_error("Duplicated function definition");
+	if (checkFuncExist(get_text(a1), a3)) parse_error("Duplicated function definition");
 	insert_SYM(get_text(a1), ftype, fLOCAL, 0/* dummy */);
 	set_argtypeofnode(ftype,a3);
 
@@ -666,12 +664,9 @@ static AST callstmt(AST name) {
     if (t->sym == '(') gettoken();
     else parse_error("expected (");
 
-    //get types of arguments in the function definition.
-    get_sons(typeof_AST(name), 0, &a1, 0, 0);
-
     a2 = argrefs();
 
-    if (!checkArgs(a1, a2)) parse_error("No defined functions matches types of passed arguments");
+    if (!checkFuncExistAll(get_text(name), a2)) parse_error("No defined functions matches types of passed arguments");
 
     if (t->sym == ')') gettoken();
     else parse_error("expected (");

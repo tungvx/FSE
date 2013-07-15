@@ -145,19 +145,20 @@ bool checkArgs(AST argsdecl, AST args){
     AST mArgs = args;
     AST definition = 0, checked = 0;
     while (mArgsdecl){
-	if (mArgs){
-	    get_sons(mArgsdecl, &definition, &mArgsdecl, 0, 0);
-	    get_sons(mArgs, &checked, &mArgs, 0, 0);
+	if (!mArgs) return false;
+	get_sons(mArgsdecl, &definition, &mArgsdecl, 0, 0);
+	get_sons(mArgs, &checked, &mArgs, 0, 0);
+	if (definition){
+	    if (!checked) return false;
 	    AST first = get_son0(definition);
 	    AST second = get_son0(checked);
 	    if (first){
-		if (second){
-		    if (!equaltype(first, second)) return false;
-		} else return false;
+		if (!second)return false;
+		if (!equaltype(first, second)) return false;
 	    }
-	} else return false;
+	}
     }
-    return true;
+    return mArgsdecl == 0 && mArgs == 0;
 }
 
 int get_sizeoftype(AST ty) {

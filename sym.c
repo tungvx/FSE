@@ -184,8 +184,7 @@ int lookup_cur(scope *sp, char *name) {
     return 0;
 }
 
-bool checkFuncDuplicate(char *name, AST args){
-    scope *sp = cur;
+bool checkFuncExistCur(scope *sp, char *name, AST args){
     symentry *p, *bp, *ep;
     int i;
 
@@ -204,6 +203,18 @@ bool checkFuncDuplicate(char *name, AST args){
 	       if (checkArgs(argsDef, args)) return true;
 	   }
        }
+    }
+    return false;
+}
+
+bool checkFuncExist(char *name, AST args){
+    return checkFuncExistCur(cur, name, args);
+}
+
+bool checkFuncExistAll(char *name, AST args){
+    scope *sp;
+    for (sp = cur; sp; sp = sp->next){
+	if (checkFuncExistCur(sp, name, args)) return true;
     }
     return false;
 }

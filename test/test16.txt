@@ -1,11 +1,7 @@
 class c {
-    int a(int x, int y){
-    }
-
     int a(){
     }
-
-    void a(int x, int y){
+    int a(int x, int y){
     }
     void main(){
 	string x;
