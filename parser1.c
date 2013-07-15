@@ -728,6 +728,14 @@ static AST bexpr_sub() {
 		parse_error(") expected");
 	    }
 	    return a;
+	case LOGOP:
+	    if (t->ival == '!'){
+		op = t->ival;
+		gettoken();
+		a = bexpr_sub();
+		a = make_AST_op1(op, a);
+		return a;
+	    }
 	default:
 	    a = expr();
 	    switch (t->sym){
