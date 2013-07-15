@@ -18,7 +18,7 @@ static void print_Node_end(Node*);
 static char *namestr[] = {
     "prog",
     "@classdecls", "classdecl", "classbody",
-    "@structs", "struct",
+    "@structdecls", "structdecl",
     "@vardecls", "vardecl", 
     "@funcdecls", "funcdecl", 
     "@argdecls", "argdecl", 
@@ -33,7 +33,7 @@ static char *namestr[] = {
 
 static char *tnamestr[] = {
     "int", "char", "float", "string", "void", 
-    "prim", "arraytype", "pointer", "structtype", "functype",
+    "prim", "arraytype", "pointer", "struct", "functype",
     0
 };
 
@@ -501,7 +501,7 @@ static void print_Node_begin(Node *np)  {
 	if (!xml) printf("class<%s", np->text);
 	else printf("<class>%s", np->text);
 	return;
-    }
+    } 
 
     s = nameof(np->type);
 
@@ -516,6 +516,7 @@ static void print_Node_begin(Node *np)  {
     switch (np->type) {
 	case tVOID:
 	case nNAME:
+	case tSTRUCT:
 	    if (xml) {
 		printf(">%s", np->text);
 	    } else {

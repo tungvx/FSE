@@ -77,6 +77,7 @@ static AST vartype(void);
 static AST rettype(void);
 static bool isprimtype(int k);
 static bool isclasstype();
+static bool isstructtype();
 static bool isrettype(int k);
 static AST argdecls(void);
 static AST argdecl(void);
@@ -92,6 +93,7 @@ static AST argref(void);
 static AST var(void);
 static AST name(void);
 static AST classname(void);
+static AST structname(void);
 static AST vName(void);
 static AST vref(void);
 static AST lval(void);
@@ -237,6 +239,17 @@ static bool isclasstype(){
     return false;
 }
 
+static bool isstructtype(){
+    Token *t = &tok;
+    if (t->sym == ID) {
+	char *text = strdup(t->text);
+	AST idx = lookup_SYM_all(text);
+	if (idx == 0) return false;
+	AST type = make_AST_name(text);
+	if (nodetype(type) == tSTRUCT) return true;
+    }
+    return false;
+}
 static bool isrettype(int k){
     return isprimtype(k) || k == tVOID;
 }
@@ -260,7 +273,7 @@ static AST vardecls(AST vdl, AST fdl) {
     bool isfuncdecl = false;
 
     while (true) {
-	if (!isprimtype(t->sym) && !isclasstype()) break;
+	if (!isprimtype(t->sym) && !isclasstype() && !isstructtype()) break;
 	a1 = vardecl();
 	if (a1 && nodetype(a1) == nFUNCDECL) /* expect var, but it was func */
 	{ isfuncdecl = true; break; }
@@ -283,11 +296,11 @@ static AST funcdecls(AST fdl) {
     AST a1=0;
 
     while (true) {
-	if ( !isrettype(t->sym) && !isclasstype()) break;
+	if ( !isrettype(t->sym) && !isclasstype() && !isstructtype()) break;
 	a1 = funcdecl();
 	if(a1) fdl = append_list(fdl, a1);
     }
-    if (t->sym != '}') parse_error("Expected void, primitive type, or a class type");
+    if (t->sym != '}') parse_error("Expected void, primitive type, struct, or a class type");
     return fdl;
 }
 
@@ -332,9 +345,8 @@ static AST vardecl() { /* TODO: allow vars */
 static AST structdecl(){
     Token *t = &tok;
 
-    AST struct_name = name();
+    AST struct_name = structname();
     insert_SYM(get_text(struct_name), 0, tGLOBAL, 0); /* dummy */
-    make_AST_struct(get_text(struct_name));
     AST a = new_list(nVARDECLS);
     if (t->sym == '{'){
 	enter_block();
@@ -362,6 +374,8 @@ static AST funcdecl() {
 
     a2 = retdecl();
     a1 = name();
+    int idx = lookup_SYM(get_text(a1));
+    if (idx != 0) parse_error("Duplicated function definition");
     ftype = func_type(gen(fLOCAL),a2);
     insert_SYM(get_text(a1), ftype, fLOCAL, 0/* dummy */);
 
@@ -439,7 +453,7 @@ static AST vartype() {
 		      if (idx != 0){
 			  a = make_AST_name(text); break;
 		      }
-	default:      parse_error("expected primtype or a class type"); break;
+	default:      parse_error("expected primtype, struct or a class type"); break;
     }
     gettoken(); 
     return a;
@@ -754,15 +768,34 @@ static AST name() {
     return a;
 }
 
+static AST structname() {
+    Token *t = &tok;
+    AST a=0;
+
+    if (t->sym == ID) {
+	char *s = strdup(t->text);
+	int idx = lookup_SYM(s);
+	if (idx != 0) {
+	    parse_error("Already used symbol");
+	    return a;
+	}
+	gettoken();
+	a = make_AST_struct(s);
+    } else {
+	parse_error("expected ID");
+    }
+    return a;
+}
+
 static AST classname(){
     Token *t = &tok;
     AST a=0;
 
     if (t->sym == ID) {
 	char *s = strdup(t->text);
-	int idx = lookup_SYM_all(s);
+	int idx = lookup_SYM(s);
 	if (idx != 0) {
-	    parse_error("Duplicated class definition");
+	    parse_error("Already used symbol");
 	    return a;
 	}
 	gettoken();
