@@ -184,6 +184,30 @@ int lookup_cur(scope *sp, char *name) {
     return 0;
 }
 
+bool checkFuncDuplicate(char *name, AST args){
+    scope *sp = cur;
+    symentry *p, *bp, *ep;
+    int i;
+
+    if (sp == 0) return 0;  /* guard */
+    i = sp->end;
+    bp = &symtab[sp->begin];
+    ep = &symtab[sp->end];
+
+    /* search reverse order */
+    for( p = ep; p >= bp; --i,--p) {
+       if (p && !obmitted[i] && p->name && strcmp(p->name,name)==0) {
+           symentry *ep = &symtab[i];
+           if (ep && ep->prop == fLOCAL){
+	       AST argsDef = 0;
+	       get_sons(gettype_SYM(i), 0, &argsDef, 0, 0);
+	       if (checkArgs(argsDef, args)) return true;
+	   }
+       }
+    }
+    return false;
+}
+
 int lookup_SYM_all(char *name) {
     scope *sp;
     int idx;

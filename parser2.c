@@ -375,16 +375,17 @@ static AST funcdecl() {
 
     a2 = retdecl();
     a1 = name();
-    int idx = lookup_SYM(get_text(a1));
-    if (idx != 0) parse_error("Duplicated function definition");
+    /*int idx = lookup_SYM(get_text(a1));*/
+    /*if (idx != 0) parse_error("Duplicated function definition");*/
     ftype = func_type(gen(fLOCAL),a2);
-    insert_SYM(get_text(a1), ftype, fLOCAL, 0/* dummy */);
 
     if (t->sym == '(') { /* must be func */
 	gettoken();
 
 	mark_args();
 	a3 = argdecls();
+	if (checkFuncDuplicate(get_text(a1), a3)) parse_error("Duplicated function definition");
+	insert_SYM(get_text(a1), ftype, fLOCAL, 0/* dummy */);
 	set_argtypeofnode(ftype,a3);
 
 	if (t->sym == ')') gettoken();
