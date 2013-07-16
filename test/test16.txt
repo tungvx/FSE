@@ -6,6 +6,7 @@ class c {
     void main(){
 	string x;
 	float y;
+	a();
 	a(x, y);
 	return;
     }

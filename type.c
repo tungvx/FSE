@@ -114,10 +114,14 @@ AST typeof_AST(AST t) {
 }
 
 static bool equal(AST x1, AST x2) {
+    char *text1, *text2;
     switch (nodetype(x1)) {
 	case tINT: case tCHAR: case tFLOAT: case tSTRING:
-	case tPRIM: 
+	case tPRIM:
 	    if (x1 == x2) return true;
+	    text1 = get_text(x1);
+	    text2 = get_text(x2);
+	    if ((strncmp(text1, "int")==0 || strncmp(text1, "char") == 0) && (strncmp(text2, "int")==0 || strncmp(text2, "char") == 0)) return true;
 	    break;
 	case tARRAY:
 	    if (nodetype(x2) != tARRAY) break;

@@ -20,4 +20,5 @@
 19. support ! operation: 1.
 20. support mutil variables declaration in one line: 1
 21. fix find symbol, when delete nodes: 2     	
-22. allow polymorphisim: 2			
+22. allow polymorphisim: 2
+22. type conversion between int and char.			  
