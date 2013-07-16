@@ -6,14 +6,16 @@ class a {
     int main(){
 	x = 3;
     }
+    int main(int x){
+    }
 }
 
 class main{
     int main(){
 	a a1;
-	a a2;
 	a1 = 1;
-
-	aObject.f();
+	a1.f();
+	a1.b();
+	a1.main(a1);
     }
 }

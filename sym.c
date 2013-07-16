@@ -31,17 +31,17 @@ char *gen(int kind) {
     int c;
 
     switch (kind) {
-       case vLOCAL: p = &var_seq;  c = 'V'; break;        
-       case cLOCAL: p = &con_seq;  c = 'C'; break;        
-       case fLOCAL: p = &func_seq;  c = 'F'; break;        
-       case tGLOBAL: p = &type_seq;  c = 'T'; break;        
-       default: break;
+	case vLOCAL: p = &var_seq;  c = 'V'; break;        
+	case cLOCAL: p = &con_seq;  c = 'C'; break;        
+	case fLOCAL: p = &func_seq;  c = 'F'; break;        
+	case tGLOBAL: p = &type_seq;  c = 'T'; break;        
+	default: break;
     }
     if (p) { 
-        sprintf(buf, "$%c%04d", c, ++(*p)); 
-        return strdup(buf);
+	sprintf(buf, "$%c%04d", c, ++(*p)); 
+	return strdup(buf);
     } else 
-        return "$$ERROR";
+	return "$$ERROR";
 }
 
 void init_SYM() { 
@@ -66,9 +66,9 @@ void init_SYM() {
 static scope *new_scope() {
     scope *sp = 0;
     if (++scope_cnt < MAX_SCOPEENTRY) {
-      sp = &scope_buf[scope_cnt];
-      sp->begin = symcnt+1;
-      sp->end   = 0;
+	sp = &scope_buf[scope_cnt];
+	sp->begin = symcnt+1;
+	sp->end   = 0;
     } else {
 	parse_error("too much scopes");
     }
@@ -90,9 +90,9 @@ void enter_block() {
     reset_offset();
     sp = new_scope();
     if (sp) {
-      sp->next = cur;
-      cur = sp;
-      reset_offset();
+	sp->next = cur;
+	cur = sp;
+	reset_offset();
     }
 }
 
@@ -100,9 +100,9 @@ void leave_block() {
     scope *tmp;
     --cur_depth;
     if (cur) {
-        tmp = cur->next;
-        delete_scope(cur);
-        cur = tmp;
+	tmp = cur->next;
+	delete_scope(cur);
+	cur = tmp;
     }
 }
 
@@ -115,8 +115,8 @@ int insert_SYM(char *name, int type, int prop, int val) {
     symentry *ep = &symtab[++symcnt];
 
     if (symcnt > MAX_SYMENTRY) {
-        parse_error("Too much symbols");
-        return 0;
+	parse_error("Too much symbols");
+	return 0;
     }
 
     cur->end = symcnt;
@@ -130,32 +130,32 @@ int insert_SYM(char *name, int type, int prop, int val) {
     sz = get_sizeoftype(type);
 
     switch (prop) {
-      case tGLOBAL:
-        offset = -1;
-        ep->loc = new_loc();
-        break;
+	case tGLOBAL:
+	    offset = -1;
+	    ep->loc = new_loc();
+	    break;
 
-      case fLOCAL: 
-        offset = 0;
-        ep->loc = new_loc();
-        break;
+	case fLOCAL: 
+	    offset = 0;
+	    ep->loc = new_loc();
+	    break;
 
-      case vLOCAL:
-        offset = get_var_offset();
-        incr_var_offset(sz);
-        goto do_lookup;
+	case vLOCAL:
+	    offset = get_var_offset();
+	    incr_var_offset(sz);
+	    goto do_lookup;
 
-      case vARG:
-        decr_arg_offset(sz);
-        offset = get_arg_offset();
-        ++depth;
+	case vARG:
+	    decr_arg_offset(sz);
+	    offset = get_arg_offset();
+	    ++depth;
 
 do_lookup:
-        /* try to share entry */
-        ep->loc = lookup_loc_entry(depth, offset, sz);
-        break;
-      default:
-        break;
+	    /* try to share entry */
+	    ep->loc = lookup_loc_entry(depth, offset, sz);
+	    break;
+	default:
+	    break;
     }
 
     set_loc_entry(ep->loc, depth, offset, sz);
@@ -173,13 +173,13 @@ int lookup_cur(scope *sp, char *name) {
 
     /* search reverse order */
     for( p = ep; p >= bp; --i,--p) {
-       if (p && !obmitted[i] && p->name && strcmp(p->name,name)==0) {
-           symentry *ep = &symtab[i];
-           if (ep && ep->prop != vARG) return i;
+	if (p && !obmitted[i] && p->name && strcmp(p->name,name)==0) {
+	    symentry *ep = &symtab[i];
+	    if (ep && ep->prop != vARG) return i;
 
-           /* effective args must be in [arg_mark, sp->end] */
-           if (arg_mark <= i) return i;
-       }
+	    /* effective args must be in [arg_mark, sp->end] */
+	    if (arg_mark <= i) return i;
+	}
     }
     return 0;
 }
@@ -195,14 +195,14 @@ bool checkFuncExistCur(scope *sp, char *name, AST args){
 
     /* search reverse order */
     for( p = ep; p >= bp; --i,--p) {
-       if (p && !obmitted[i] && p->name && strcmp(p->name,name)==0) {
-           symentry *ep = &symtab[i];
-           if (ep && ep->prop == fLOCAL){
-	       AST argsDef = 0;
-	       get_sons(gettype_SYM(i), 0, &argsDef, 0, 0);
-	       if (checkArgs(argsDef, args)) return true;
-	   }
-       }
+	if (p && !obmitted[i] && p->name && strcmp(p->name,name)==0) {
+	    symentry *ep = &symtab[i];
+	    if (ep && ep->prop == fLOCAL){
+		AST argsDef = 0;
+		get_sons(gettype_SYM(i), 0, &argsDef, 0, 0);
+		if (checkArgs(argsDef, args)) return true;
+	    }
+	}
     }
     return false;
 }
@@ -219,12 +219,32 @@ bool checkFuncExistAll(char *name, AST args){
     return false;
 }
 
+bool checkFuncExistClass(AST class, char *name, AST args){
+    AST classDecl = get_father(get_father(class));
+    AST classBody = 0;
+    get_sons(classDecl, 0, &classBody, 0, 0);
+    if (classBody){
+    	AST funcdecls = 0;
+	get_sons(classBody, 0, 0, 0, &funcdecls);
+	while  (funcdecls){
+	    AST funcdecl = 0;
+	    get_sons(funcdecls, &funcdecl, &funcdecls, 0, 0);
+	    if (funcdecl){
+		AST namedecl = 0, argdecls = 0;
+		get_sons(funcdecl, &namedecl, 0, &argdecls, 0);
+		if (strncmp(get_text(namedecl), name, 100) == 0 && checkArgs(argdecls, args, 100)) return true;
+	    }
+	}
+    }
+    return false;
+}
+
 int lookup_SYM_all(char *name) {
     scope *sp;
     int idx;
     for (sp = cur; sp; sp = sp->next) {
-        if (idx = lookup_cur(sp,name)) 
-            return idx;
+	if (idx = lookup_cur(sp,name)) 
+	    return idx;
     }
     return 0;
 }
@@ -291,7 +311,7 @@ void dump_SYM(FILE *fp) {
     symentry *ep = &symtab[1];
     fprintf(fp, "SYM:cnt=%d\n", symcnt);
     for (i=1;i<=symcnt;i++, ep++) {
-         fprintf(fp, "%4d:%-10s %4d %8s %4d %4d\n", i, ep->name, ep->type, 
+	fprintf(fp, "%4d:%-10s %4d %8s %4d %4d\n", i, ep->name, ep->type, 
 		propname(ep->prop), ep->val, ep->loc);
     }
     fprintf(fp, "\n");
@@ -300,7 +320,7 @@ void dump_SYM(FILE *fp) {
 int propval(char *text) {
     int i;
     for (i=0;namestr[i];i++) {
-        if (strcmp(namestr[i],text)==0) return i+vLOCAL;
+	if (strcmp(namestr[i],text)==0) return i+vLOCAL;
     }
     return 0;
 }
@@ -312,11 +332,11 @@ int restore_SYM(FILE *fp) {
     symentry *ep = &symtab[1];
     fscanf(fp, "\nSYM:cnt=%d\n", &symcnt);
     for (i=1;i<=symcnt;i++, ep++) {
-         bzero(text,40); bzero(prop,10);
-         fscanf(fp, "%d:%s %d %s %d %d\n", &k, 
-              text, &(ep->type), prop, &(ep->val),&(ep->loc));
-         ep->prop = propval(prop);
-         ep->name = strdup(text);
+	bzero(text,40); bzero(prop,10);
+	fscanf(fp, "%d:%s %d %s %d %d\n", &k, 
+		text, &(ep->type), prop, &(ep->val),&(ep->loc));
+	ep->prop = propval(prop);
+	ep->name = strdup(text);
     }
     return symcnt;
 }

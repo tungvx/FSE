@@ -22,3 +22,4 @@
 21. fix find symbol, when delete nodes: 2     	
 22. allow polymorphisim: 2
 22. type conversion between int and char.			  
+23. function call var.function.				

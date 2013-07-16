@@ -95,7 +95,6 @@ static AST name(void);
 static AST classname(void);
 static AST structname(void);
 static AST vName(void);
-static AST vName_of_class(AST type);
 static AST vref(void);
 static AST lval(void);
 static AST exprs(void);
@@ -557,17 +556,29 @@ static AST stmt() {
     switch (t->sym) {
 	case ID: /* ASN or CALL */
 	    n = vName();
+            char *s = get_text(n);
 	    if (t->sym == ASNOP || t->sym == '[') {
+		int idx = lookup_SYM_all(s);
+		if (idx == 0) parse_error("Undefined symbol");
 		a1 = asnstmt(n);
 		if (t->sym == ';') gettoken();
 	    } else if (t->sym == '(') {
 		a1 = callstmt(n);
+		AST args = 0;
+		get_sons(a1, 0, 0, &args, 0);
+    		if (!checkFuncExistAll(s, args)) parse_error("No defined functions matches types of passed arguments");
 		if (t->sym == ';') gettoken();
 	    } else if (t->sym == '.'){
 		gettoken();
 		type = typeof_AST(n);
 		if (nodetype(type) == tCLASS){
-		    AST function_name = vName_of_class(type);
+		    AST function_name = vName();
+		    a1 = callstmt(function_name);
+		    AST args = 0;
+		    get_sons(a1, 0, 0, &args, 0);
+		    /*set_sons(a1, n, function_name, args, 0);*/
+    		    if (!checkFuncExistClass(type, get_text(function_name), args)) parse_error("No defined functions of the class matches types of passed arguments");
+		    if (t->sym == ';') gettoken();
 		} else {
 		    parse_error("Symbol must be instance of a class");
 		    skiptoken(';');
@@ -665,7 +676,6 @@ static AST callstmt(AST name) {
 
     a2 = argrefs();
 
-    if (!checkFuncExistAll(get_text(name), a2)) parse_error("No defined functions matches types of passed arguments");
 
     if (t->sym == ')') gettoken();
     else parse_error("expected (");
@@ -815,28 +825,11 @@ static AST vName(){
 
     if (t->sym == ID) {
 	char *s = strdup(t->text);
-	int idx = lookup_SYM_all(s);
-	if (idx == 0) parse_error("Undefined symbol");
 	gettoken();
 	a = make_AST_name(s);
     } else {
 	parse_error("expected ID");
     }
-    return a;
-}
-
-static AST vName_of_class(AST type){
-    Token *t = &tok;
-
-    AST a = 0;
-
-    if (t->sym == ID){
-	char *s = strdup(t->text);
-	AST classDecl = get_father(get_father(type));
-	AST classBody = 0;
-	get_sons(classDecl, 0, &classBody, 0, 0);
-	printf("Body %d\n", classBody);
-    } else parse_error("Expected ID");
     return a;
 }
 
