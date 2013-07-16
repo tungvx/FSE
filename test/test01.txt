@@ -1,6 +1,11 @@
 {
    int[10] x;
    int y, z;
+   string s;
+   s = "S";
+   y++;
+   x++;
+   s++;
    z = 'c';
    y = x[2];
    if (true) x[1] = y;
@@ -8,5 +13,5 @@
    else if (y < 0) { int z; y = x[z + 5]; z = y; }
         else   y = x[x[y]+6]; 
    x[7] = y + 8; 
-   if (x + 2 >= 3 && (x <= y || y == x ^^ y != x)) x;
+   if (x[1] + 2 >= 3 && (x[2] <= y || y == x[3] ^^ y != x[4])) x;
 }

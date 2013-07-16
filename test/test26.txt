@@ -1,6 +1,7 @@
 class a {
     void f(){
 	int x;
+	x = 2;
     }
     int main(){
 	x = 3;
@@ -9,7 +10,10 @@ class a {
 
 class main{
     int main(){
-	a aObject;
+	a a1;
+	a a2;
+	a1 = 1;
+
 	aObject.f();
     }
 }

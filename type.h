@@ -16,5 +16,6 @@ void print_type(int);
 
 bool equaltype(int,int);
 bool checkArgs(int, int);
+void checktypesingleop(int);
 
 #endif /* _TYPE_H_ */

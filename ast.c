@@ -293,6 +293,7 @@ AST make_AST_con(char *text, int val) {
 }
 
 AST make_AST_op2(int op, AST s0, AST s1) {
+    if (!equaltype(s0, s1)) parse_error("Type mismatched between two arguments of operator");
     AST a = new_AST();
     set_node(a, nOP2, 0, op);
     set_sons(a, s0, s1, 0, 0);
@@ -300,6 +301,7 @@ AST make_AST_op2(int op, AST s0, AST s1) {
 }
 
 AST make_AST_op0(int op, AST s){
+    checktypesingleop(s);
     AST a = new_AST();
     set_node(a, nOP0, 0, op);
     set_sons(a, s, 0, 0, 0);
@@ -307,6 +309,7 @@ AST make_AST_op0(int op, AST s){
 }
 
 AST make_AST_op1(int op, AST s){
+    checktypesingleop(s);
     AST a = new_AST();
     set_node(a, nOP1, 0, op);
     set_sons(a, s, 0, 0, 0);

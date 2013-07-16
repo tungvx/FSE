@@ -301,7 +301,6 @@ static AST funcdecls(AST fdl) {
 	a1 = funcdecl();
 	if(a1) fdl = append_list(fdl, a1);
     }
-    if (a1 && t->sym != '}') parse_error("Expected void, primitive type, struct, or a class type");
     return fdl;
 }
 

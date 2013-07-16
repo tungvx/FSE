@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "type.h"
 #include "sym.h"
+#include "token.h"
 #include "ast.h"
 
 /* 
@@ -117,7 +118,7 @@ static bool equal(AST x1, AST x2) {
     char *text1, *text2;
     switch (nodetype(x1)) {
 	case tINT: case tCHAR: case tFLOAT: case tSTRING:
-	case tPRIM:
+	case tPRIM: case tCLASS: case tSTRUCT:
 	    if (x1 == x2) return true;
 	    text1 = get_text(x1);
 	    text2 = get_text(x2);
@@ -142,6 +143,20 @@ bool equaltype(AST a1, AST a2) {
     int x2 = typeof_AST(a2);
 
     return equal(x1,x2);
+}
+
+void checktypesingleop(AST a){
+    int x1 = typeof_AST(a);
+    char *text = get_text(x1);
+    switch(nodetype(x1)){
+	case tPRIM: 
+	    if (strncmp(text, "int") == 0 || strncmp(text, "char") == 0 ||strncmp(text, "float") == 0 ||strncmp(text, "pointer") == 0) return;
+	    break;
+	case tINT: case tCHAR: case tFLOAT: case tPOINTER: case tARRAY:
+	    return;
+    }
+    printf("%s\n", text);
+    parse_error("Expected type int, char, float or pointer");
 }
 
 bool checkArgs(AST argsdecl, AST args){
