@@ -104,7 +104,7 @@ static AST bexpr(void);
 
 static AST ast_root;
 
-static int ast_debug = true;
+static int ast_debug = false;
 
 #ifdef TEST_PARSER
 int main() {
@@ -374,6 +374,7 @@ static AST funcdecl() {
     a2 = retdecl();
     a1 = name();
     ftype = func_type(gen(fLOCAL),a2);
+    insert_SYM(get_text(a1), ftype, fLOCAL, 0/* dummy */);
 
     if (t->sym == '(') { /* must be func */
 	gettoken();
@@ -381,7 +382,6 @@ static AST funcdecl() {
 	mark_args();
 	a3 = argdecls();
 	if (checkFuncExist(get_text(a1), a3)) parse_error("Duplicated function definition");
-	insert_SYM(get_text(a1), ftype, fLOCAL, 0/* dummy */);
 	set_argtypeofnode(ftype,a3);
 
 	if (t->sym == ')') gettoken();

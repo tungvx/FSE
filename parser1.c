@@ -93,7 +93,7 @@ static AST factor(void);
 static AST ast_root;
 static AST zero;
 
-static int ast_debug = true;
+static int ast_debug = false;
 
 #ifdef TEST_PARSER
 int main() {

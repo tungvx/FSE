@@ -1,4 +1,7 @@
 class f{
+    int y;
+    void test(){
+    }
     int test(int x){
     }
     int test1(){

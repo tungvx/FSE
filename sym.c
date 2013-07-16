@@ -148,7 +148,7 @@ int insert_SYM(char *name, int type, int prop, int val) {
 	case vARG:
 	    decr_arg_offset(sz);
 	    offset = get_arg_offset();
-	    ++depth;
+	    depth++;
 
 do_lookup:
 	    /* try to share entry */
